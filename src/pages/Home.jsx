@@ -95,6 +95,7 @@ export default function Home() {
                 <li>Supplier Bids &amp; Winning Bid Selection</li>
                 <li>Procurement Financials &amp; Savings Ledger</li>
                 <li>Transaction Audit Trail Log</li>
+                <li>Export Individual Procurement Reports</li>
               </ul>
             </div>
 
@@ -166,6 +167,7 @@ export default function Home() {
                 <Link to="/chr/bids" style={{ fontSize: '13px' }}>&bull; Bids Evaluation</Link>
                 <Link to="/chr/financials" style={{ fontSize: '13px' }}>&bull; Financial Monitoring</Link>
                 <Link to="/chr/history" style={{ fontSize: '13px' }}>&bull; Transaction History</Link>
+                <Link to="/chr/export" style={{ fontSize: '13px' }}>&bull; Export</Link>
               </div>
             </div>
 

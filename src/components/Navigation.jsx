@@ -66,6 +66,7 @@ export default function Navigation({ children }) {
       <section
         role="region"
         aria-label="Capstone Prototype Scope Notice"
+        className="no-print"
         style={{
           backgroundColor: '#eff6ff',
           borderBottom: '1px solid #bfdbfe',
@@ -176,6 +177,12 @@ export default function Navigation({ children }) {
                   className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                 >
                   Transaction History
+                </NavLink>
+                <NavLink
+                  to="/chr/export"
+                  className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                >
+                  Export
                 </NavLink>
               </>
             )}

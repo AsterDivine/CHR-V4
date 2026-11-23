@@ -30,6 +30,7 @@ import ProcurementDetails from './pages/chr/ProcurementDetails.jsx';
 import CHRBids from './pages/chr/CHRBids.jsx';
 import SimpleFinancialMonitoring from './pages/chr/SimpleFinancialMonitoring.jsx';
 import TransactionHistoryView from './pages/chr/TransactionHistoryView.jsx';
+import ExportProcurement from './pages/chr/ExportProcurement.jsx';
 
 // Bidder Modules
 import BidderOpportunities from './pages/bidder/BidderOpportunities.jsx';
@@ -78,6 +79,9 @@ export default function App() {
 
         {/* 7. Transaction History Audit Log */}
         <Route path="/chr/history" element={<TransactionHistoryView />} />
+
+        {/* 8. Export Procurement Record */}
+        <Route path="/chr/export" element={<ExportProcurement />} />
 
         {/* ================================================================= */}
         {/* BIDDER MODULES (Core Functions)                                   */}
