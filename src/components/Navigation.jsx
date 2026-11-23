@@ -75,17 +75,11 @@ export default function Navigation({ children }) {
           color: '#1e3a8a',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           flexWrap: 'wrap',
           gap: '10px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '15px' }} aria-hidden="true">&#9432;</span>
-          <span>
-            <strong>Prototype only &mdash; authentication and final access control will be implemented in a later development stage.</strong>
-          </span>
-        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             type="button"
@@ -115,14 +109,6 @@ export default function Navigation({ children }) {
             <div className="branding-text">
               <h1>CHR-CAR</h1>
               <p>Procurement &amp; Finance</p>
-            </div>
-          </div>
-
-          {/* Active View Indicator */}
-          <div className="sidebar-role-indicator">
-            <div className="label">Active Prototype View</div>
-            <div className="role-val">
-              {isHome ? 'Home / Portal Selector' : activeChr ? 'CHR Personnel' : 'Bidder / Supplier'}
             </div>
           </div>
 
@@ -252,7 +238,6 @@ export default function Navigation({ children }) {
           {/* Prototype Footer Inside Sidebar */}
           <div className="sidebar-footer">
             <div style={{ fontWeight: 600, color: '#f8fafc' }}>CHR-CAR Capstone</div>
-            <div style={{ opacity: 0.75, fontSize: '11px' }}>50% Core Functions Prototype</div>
           </div>
         </aside>
 

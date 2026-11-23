@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 /**
  * Home / Prototype Navigation Component
@@ -13,8 +13,6 @@ import { Link, useNavigate } from 'react-router-dom';
  * Database table affected: None.
  */
 export default function Home() {
-  const navigate = useNavigate();
-
   return (
     <article aria-labelledby="prototype-home-title" style={{ maxWidth: '960px', margin: '0 auto', padding: '12px 0 36px 0' }}>
       {/* Official Government Seal & Title Banner */}
@@ -58,99 +56,6 @@ export default function Home() {
         </p>
       </header>
 
-
-      {/* PROTOTYPE VIEW SELECTOR: 2 PRIMARY ROLES */}
-      <section aria-labelledby="select-view-title" style={{ marginBottom: '36px' }}>
-        <h2 id="select-view-title" style={{ fontSize: '17px', fontWeight: 700, color: 'var(--color-primary-dark)', marginBottom: '16px', textAlign: 'center' }}>
-          Select Prototype View to Evaluate
-        </h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-          {/* CHR Personnel Card */}
-          <div
-            className="gov-card"
-            style={{
-              padding: '24px',
-              borderTop: '4px solid var(--color-primary)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="badge badge-published" style={{ fontSize: '11px' }}>Internal Role</span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-subtle)' }}>5 Modules</span>
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary-dark)', marginBottom: '8px' }}>
-                CHR Personnel View
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '16px' }}>
-                Manage master procurement records, input item specifications, track 9 statutory stages, evaluate supplier price quotations, award winning bids, and monitor regional budget savings.
-              </p>
-              <ul style={{ fontSize: '12.5px', color: 'var(--color-text-main)', paddingLeft: '20px', marginBottom: '20px', lineHeight: 1.6 }}>
-                <li>Executive KPI Dashboard</li>
-                <li>Centralized Procurement Records Table</li>
-                <li>Create / Edit Procurement Form with Item Specs</li>
-                <li>Supplier Bids &amp; Winning Bid Selection</li>
-                <li>Procurement Financials &amp; Savings Ledger</li>
-                <li>Transaction Audit Trail Log</li>
-                <li>Export Individual Procurement Reports</li>
-              </ul>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate('/chr/dashboard')}
-              className="btn btn-primary"
-              style={{ width: '100%', padding: '12px', fontSize: '14px', fontWeight: 700 }}
-            >
-              Open CHR Personnel View &rarr;
-            </button>
-          </div>
-
-          {/* Bidder / Supplier Card */}
-          <div
-            className="gov-card"
-            style={{
-              padding: '24px',
-              borderTop: '4px solid var(--color-accent-gold)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="badge badge-review" style={{ fontSize: '11px' }}>External Role</span>
-                <span style={{ fontSize: '12px', color: 'var(--color-text-subtle)' }}>3 Modules</span>
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-accent-gold)', marginBottom: '8px' }}>
-                Bidder / Supplier View
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '16px' }}>
-                Browse open bidding opportunities published by CHR-CAR, view Approved Budget for the Contract (ABC) and specifications, and submit price quotations directly without account registration.
-              </p>
-              <ul style={{ fontSize: '12.5px', color: 'var(--color-text-main)', paddingLeft: '20px', marginBottom: '20px', lineHeight: 1.6 }}>
-                <li>Public Catalog of Open Procurement Projects</li>
-                <li>Project Specifications &amp; Submission Deadlines</li>
-                <li>Direct Price Quotation Submission Form</li>
-                <li>Submission History &amp; Review Status</li>
-              </ul>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate('/bidder/opportunities')}
-              className="btn btn-secondary"
-              style={{ width: '100%', padding: '12px', fontSize: '14px', fontWeight: 700, borderColor: 'var(--color-accent-gold)', color: 'var(--color-accent-gold)' }}
-            >
-              Open Bidder View &rarr;
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* QUICK LINKS DIRECTORY */}
       <section aria-labelledby="all-pages-heading">
         <div className="gov-card" style={{ padding: '20px 24px' }}>
@@ -178,13 +83,6 @@ export default function Home() {
                 <Link to="/bidder/submit-bid" style={{ fontSize: '13px' }}>&bull; Submit Quotation</Link>
                 <Link to="/bidder/my-quotations" style={{ fontSize: '13px' }}>&bull; My Submitted Quotations</Link>
               </div>
-            </div>
-
-            <div>
-              <strong style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>Backend Architecture:</strong>
-              <p style={{ fontSize: '12px', color: 'var(--color-text-subtle)', marginTop: '8px', lineHeight: 1.5 }}>
-                Pure PHP endpoints in <code>/api/procurements/</code> using PDO prepared statements. MySQL database <code>chr_procurement</code>.
-              </p>
             </div>
           </div>
         </div>
