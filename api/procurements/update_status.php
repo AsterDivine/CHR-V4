@@ -1,34 +1,21 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/update_status.php
- * =============================================================================
- * 
- * Updates the procurement's status ('Open', 'For Evaluation', 'Awarded', 'In Progress', 'Completed').
- * Uses pure PHP MySQLi prepared statements.
- * Immediately logs the transition with remarks into `transaction_history`.
- */
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
-// Accept only POST requests
+// Accept only post requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Method not allowed. Use POST.', null, 405);
 }
 
 /**
  * Transitions the procurement status and records the audit history.
- * Used by: React components.
- * Connects to: Endpoint /api/procurements/update_status.php
- * Database tables affected: Updates 'procurements', writes to 'transaction_history'.
- *
  * @param mysqli $conn Active MySQLi database connection.
  * @param array  $data Input payload containing id, status, and remarks.
  * @return void
  */
+
 function updateProcurementStatusAndStage($conn, $data) {
     $id      = filter_var($data['id'] ?? null, FILTER_VALIDATE_INT);
     $status  = trim($data['status'] ?? '');
@@ -54,6 +41,7 @@ function updateProcurementStatusAndStage($conn, $data) {
 
     $oldStatus = $procurement['status'];
     $newStatus = !empty($status) ? $status : $oldStatus;
+
 
     $conn->begin_transaction();
 
@@ -99,13 +87,9 @@ function updateProcurementStatusAndStage($conn, $data) {
     }
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Read JSON body
 $input = getJsonInput();
-
-// 3. Update MySQL
 updateProcurementStatusAndStage($conn, $input);
 
 sendSuccess('Procurement status updated successfully.', [

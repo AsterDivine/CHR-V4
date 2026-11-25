@@ -1,30 +1,16 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_procurements.php
- * =============================================================================
- * 
- * Pure PHP endpoint that performs a SELECT query on the MySQL `procurements` table.
- * Sorts newest procurement records first (created_at DESC, id DESC) and returns JSON.
- * Uses MySQLi prepared statements and centralized connection from database.php.
- */
+
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
 /**
- * Fetches procurement records from the MySQL `procurements` table (newest first).
- * Supports an optional status query parameter (?status=Open, etc.).
- * Used by: React page ProcurementTable.jsx, CHRDashboard.jsx, and BidderOpportunities.jsx.
- * Connects to: Endpoint GET /api/procurements/get_procurements.php
- * Database tables affected: Reads from `procurements` and aggregates count from `bids`.
- *
  * @param mysqli $conn   Active MySQLi database connection from getDbConnection().
  * @param string $status Optional procurement status filter string.
  * @return array List of procurement rows from MySQL sorted newest first.
  */
+
 function fetchProcurementList($conn, $status = '') {
     $sql = '
         SELECT 
@@ -77,7 +63,7 @@ function fetchProcurementList($conn, $status = '') {
     $records = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 
-    // Normalize numeric types cleanly for JSON output
+    // Normalize numeric types cleanly for json output
     foreach ($records as &$row) {
         $row['id']             = (int)$row['id'];
         $row['abc']            = (float)$row['abc'];
@@ -90,13 +76,11 @@ function fetchProcurementList($conn, $status = '') {
     return $records;
 }
 
-// 1. Establish MySQLi database connection
+//Establish MySQLi database connection
 $conn = getDbConnection();
-
-// 2. Read optional query parameter (?status=...)
 $statusFilter = trim((string)($_GET['status'] ?? ''));
 
-// 3. Query MySQL `procurements` table and return JSON
+//Query MySQL procurements table and return json
 $procurements = fetchProcurementList($conn, $statusFilter);
 
 sendSuccess('Procurement records retrieved successfully.', [

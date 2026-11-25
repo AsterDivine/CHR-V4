@@ -1,14 +1,5 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/helpers/audit.php
- * =============================================================================
- * 
- * Helper to record administrative and security audit trail logs
- * in the MySQL `transaction_history` table for compliance and defense reporting.
- * Uses pure PHP MySQLi prepared statements.
- */
+
 
 /**
  * Inserts a transaction history entry into MySQL.
@@ -21,6 +12,8 @@
  * @param string|null $remarks       Descriptive narrative
  * @return void
  */
+
+//Transactions dito
 function recordTransactionHistory($conn, $procurementId, $action, $oldValue = null, $newValue = null, $remarks = null) {
     try {
         $stmt = $conn->prepare('

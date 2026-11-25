@@ -1,40 +1,21 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/select_bid.php
- * =============================================================================
- * 
- * Allows CHR Personnel to select the winning bidder quotation for a procurement.
- * Uses pure PHP MySQLi prepared statements.
- * Transparently updates:
- * 1. The selected bid status to 'Selected' and others to 'Not Selected'
- * 2. The procurement record:
- *    - awarded_amount = selected bid quotation amount
- *    - savings = abc - awarded_amount (automatic financial calculation)
- *    - status = 'Awarded'
- * 3. Appends an audit entry into `transaction_history` recording the winner and savings.
- */
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
-// Accept only POST requests
+// Accept only post requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Method not allowed. Use POST.', null, 405);
 }
 
 /**
  * Marks a bid as selected, sets awarded financials, and logs the award event.
- * Used by: React component CHRBids.jsx and ProcurementDetails.jsx.
- * Connects to: Endpoint /api/procurements/select_bid.php
- * Database tables affected: Updates 'bids' and 'procurements', writes to 'transaction_history'.
- *
  * @param mysqli $conn Active MySQLi database connection.
  * @param array  $data Input payload containing bid_id and optional remarks.
  * @return array Updated financial metrics (abc, awarded_amount, savings).
  */
+
 function selectWinningBid($conn, $data) {
     $bidId   = filter_var($data['bid_id'] ?? null, FILTER_VALIDATE_INT);
     $remarks = trim($data['remarks'] ?? '');
@@ -78,10 +59,10 @@ function selectWinningBid($conn, $data) {
     $abc           = (float)$record['abc'];
     $awardedAmount = (float)$record['bid_amount'];
 
-    // Transparent calculation of procurement savings: ABC - Awarded Amount
+    //calculation of procurement savings
     $savings = $abc - $awardedAmount;
 
-    // Safety validation: Awarded amount must not exceed the ABC
+    // Safety validation, awarded amount must not exceed the ABC
     if ($awardedAmount > $abc) {
         sendError(
             sprintf(
@@ -97,7 +78,7 @@ function selectWinningBid($conn, $data) {
     $conn->begin_transaction();
 
     try {
-        // 1. Mark winning bid as 'Selected'
+        //Mark winning bid as Selected
         $updateBidStmt = $conn->prepare('UPDATE bids SET status = "Selected" WHERE id = ?');
         if (!$updateBidStmt) {
             throw new Exception('SQL prepare error: ' . $conn->error);
@@ -106,7 +87,7 @@ function selectWinningBid($conn, $data) {
         $updateBidStmt->execute();
         $updateBidStmt->close();
 
-        // Mark other bids for this procurement as 'Not Selected'
+        //Mark other bids for this procurement as Not Selected
         $otherBidsStmt = $conn->prepare('UPDATE bids SET status = "Not Selected" WHERE procurement_id = ? AND id != ?');
         if (!$otherBidsStmt) {
             throw new Exception('SQL prepare error: ' . $conn->error);
@@ -115,7 +96,7 @@ function selectWinningBid($conn, $data) {
         $otherBidsStmt->execute();
         $otherBidsStmt->close();
 
-        // 2. Updates the procurement record with awarded amount, savings, and status 'Awarded'
+        //Updates the procurement record with awarded amount, savings, and status Awarded.
         $updateProcStmt = $conn->prepare('
             UPDATE procurements
             SET 
@@ -132,7 +113,7 @@ function selectWinningBid($conn, $data) {
         $updateProcStmt->execute();
         $updateProcStmt->close();
 
-        // 3. Formulate audit log remarks
+        //Audit log remarks
         $winnerCompany = !empty($record['company_name']) ? $record['company_name'] : $record['bidder_name'];
         $awardNotes = !empty($remarks)
             ? $remarks
@@ -143,7 +124,7 @@ function selectWinningBid($conn, $data) {
                 number_format($savings, 2)
             );
 
-        // Inserts the award event into the transaction_history audit table
+        // Inserts the award event into the transaction_history table
         $histStmt = $conn->prepare('
             INSERT INTO transaction_history (
                 procurement_id,
@@ -182,13 +163,9 @@ function selectWinningBid($conn, $data) {
     }
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Parse input JSON payload
 $input = getJsonInput();
-
-// 3. Select bid in MySQL
 $result = selectWinningBid($conn, $input);
 
 sendSuccess('Winning bid selected and procurement updated successfully.', $result);

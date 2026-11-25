@@ -4,10 +4,6 @@ import { loadDashboardSummary } from '../../services/api.js';
 
 /**
  * Formats a numeric value into Philippine Peso currency format (PHP #,##0.00).
- * Used by: CHRDashboard component to display ABC, awarded amount, and savings.
- * Connects to: Local formatting utility.
- * Database table affected: None.
- *
  * @param {number|null} val - Amount to format.
  * @returns {string} Formatted currency string.
  */
@@ -21,10 +17,7 @@ function formatCurrency(val) {
 
 /**
  * Maps procurement status strings to clean CSS badge classes.
- * Used by: CHRDashboard and ProcurementTable to render visual status badges.
- * Connects to: Local style helper.
- * Database table affected: None.
- *
+
  * @param {string} status - Procurement status string.
  * @returns {string} CSS class name for styling.
  */
@@ -53,9 +46,6 @@ function getStatusBadgeClass(status) {
  * Executive dashboard for CHR Personnel. Displays high-level procurement metrics,
  * budget savings summary, recent procurements, and real-time transaction activity.
  * Includes an automatic 8-second refresh interval to demonstrate real-time updates.
- * Used by: App.jsx at route /chr/dashboard and default /.
- * Connects to: Endpoint /api/procurements/get_dashboard_summary.php
- * Database tables affected: Reads from procurements, bids, and transaction_history.
  */
 export default function CHRDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -63,12 +53,9 @@ export default function CHRDashboard() {
   const [error, setError] = useState(null);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
 
-  /**
-   * Fetches latest dashboard summary statistics and recent projects from the PHP backend.
-   * Used by: useEffect hook on initial component mount and manual refresh.
-   * Connects to: /api/procurements/get_dashboard_summary.php
-   * Database tables affected: Reads from procurements, bids, and transaction_history.
-   */
+
+  //Fetches latest dashboard summary statistics and recent projects from the PHP backend.
+ 
   const fetchDashboard = async () => {
     try {
       setError(null);
@@ -99,6 +86,8 @@ export default function CHRDashboard() {
 
   const recentProcurements = dashboardData?.recent_procurements || [];
   const recentHistory = dashboardData?.recent_history || [];
+
+// Revamp kung may time
 
   return (
     <article aria-labelledby="chr-dashboard-heading">

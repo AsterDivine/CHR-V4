@@ -4,10 +4,6 @@ import { loadProcurementDetails, updateProcurementStatus, selectWinningBid } fro
 
 /**
  * Formats a numeric value into Philippine Peso currency format (PHP #,##0.00).
- * Used by: ProcurementDetails to display ABC, awarded amount, savings, and bid amounts.
- * Connects to: Local formatting utility.
- * Database table affected: None.
- *
  * @param {number|null} val - Numeric value to format.
  * @returns {string} Formatted currency string.
  */
@@ -21,10 +17,6 @@ function formatCurrency(val) {
 
 /**
  * Maps procurement status strings to clean CSS badge classes.
- * Used by: ProcurementDetails to visually style the project status.
- * Connects to: Local styling helper.
- * Database table affected: None.
- *
  * @param {string} status - Procurement status string.
  * @returns {string} CSS class name.
  */
@@ -45,6 +37,7 @@ function getStatusBadgeClass(status) {
 }
 
 // 9 Statutory Procurement Stages for government tracking under R.A. 9184
+//PALITAN ITO
 const STATUTORY_STAGES = [
   'Purchase Request',
   'Request for Quotation',
@@ -57,18 +50,7 @@ const STATUTORY_STAGES = [
   'Payment & Completion',
 ];
 
-/**
- * ProcurementDetails Component
- * Comprehensive view of a single procurement record.
- * Integrates:
- * - Module 4: Procurement Details & Specifications
- * - Module 7: CHR Bid Table with Winning Bid Selection
- * - Module 8: Procurement Status Tracker across 9 statutory stages
- * - Module 10: Transaction History Audit Trail
- * Used by: App.jsx at route /chr/procurements/:id.
- * Connects to: /api/procurements/get_procurement.php, /api/procurements/update_status.php, and /api/procurements/select_bid.php
- * Database tables affected: Reads and updates 'procurements', 'bids', and 'transaction_history'.
- */
+
 export default function ProcurementDetails() {
   const { id } = useParams();
   const [procurement, setProcurement] = useState(null);
@@ -82,11 +64,8 @@ export default function ProcurementDetails() {
   const [transitionRemarks, setTransitionRemarks] = useState('');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-  /**
-   * Fetches the complete procurement record with items, bids, and history from the PHP backend.
-   * Connects to: /api/procurements/get_procurement.php?id=X
-   * Database tables affected: Reads from procurements, procurement_items, bids, and transaction_history.
-   */
+  //Fetches the complete procurement record with items, bids, and history from the PHP backend.
+
   const loadDetails = async () => {
     try {
       const data = await loadProcurementDetails(id);
@@ -106,10 +85,6 @@ export default function ProcurementDetails() {
 
   /**
    * Submits a status/stage transition with remarks to the PHP backend.
-   * Used by: Procurement Status Tracker form.
-   * Connects to: /api/procurements/update_status.php
-   * Database tables affected: Updates procurements, writes to transaction_history.
-   *
    * @param {React.FormEvent} e
    */
   const handleStageTransitionSubmit = async (e) => {
@@ -140,10 +115,6 @@ export default function ProcurementDetails() {
    * Selects a bidder quotation as the winning bid.
    * Transparently triggers award status, records awarded amount,
    * calculates savings (ABC - Awarded), and logs the event in transaction_history.
-   * Used by: "Select as Winning Bid" button on each quotation row.
-   * Connects to: /api/procurements/select_bid.php
-   * Database tables affected: Updates bids and procurements, writes to transaction_history.
-   *
    * @param {number} bidId - Primary key ID of the bid to award.
    * @param {string} bidderName - Company name of winning bidder.
    * @param {number} bidAmount - Price quotation amount.

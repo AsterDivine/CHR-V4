@@ -1,28 +1,17 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_dashboard_summary.php
- * =============================================================================
- * 
- * Computes executive KPI summary cards and recent activity for the CHR Dashboard.
- * Returns counts of active procurements, pending bids, total ABC, and budget savings.
- * Uses pure PHP MySQLi prepared statements.
- */
+
+//required ba talaga?
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
 /**
- * Computes statistical counts and loads recent procurement activities from MySQL.
- * Used by: React component CHRDashboard.jsx.
- * Connects to: Endpoint /api/procurements/get_dashboard_summary.php
- * Database tables affected: Reads from 'procurements', 'bids', and 'transaction_history'.
- *
  * @param mysqli $conn Active MySQLi database connection.
  * @return array Dashboard KPIs, recent procurements, and recent history logs.
  */
+
+//statsitics for CHR
 function fetchDashboardKPIs($conn) {
     // 1. Compute aggregate statistics from procurements table
     $stmt = $conn->prepare('
@@ -46,7 +35,7 @@ function fetchDashboardKPIs($conn) {
     $kpi = $result->fetch_assoc();
     $stmt->close();
 
-    // 2. Count total submitted bids
+    //Count total submitted bids
     $bidStmt = $conn->prepare('SELECT COUNT(*) AS total_bids FROM bids');
     $bidStmt->execute();
     $bidResult = $bidStmt->get_result();
@@ -54,7 +43,7 @@ function fetchDashboardKPIs($conn) {
     $bidCount = (int)($bidRow['total_bids'] ?? 0);
     $bidStmt->close();
 
-    // 3. Fetch 5 most recent procurements
+    //fetch 5 most recent procurements
     $recentStmt = $conn->prepare('
         SELECT 
             p.id,
@@ -91,7 +80,7 @@ function fetchDashboardKPIs($conn) {
     }
     unset($r);
 
-    // 4. Fetch 5 most recent transaction logs
+    //fetch 5 most recent transaction logs
     $histStmt = $conn->prepare('
         SELECT 
             h.id,
@@ -131,10 +120,8 @@ function fetchDashboardKPIs($conn) {
     ];
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Fetch metrics and send JSON response
 $data = fetchDashboardKPIs($conn);
 
 sendSuccess('Dashboard summary metrics retrieved successfully.', $data);

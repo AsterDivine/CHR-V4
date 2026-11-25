@@ -1,10 +1,4 @@
--- =============================================================================
--- Centralized Procurement Tracking and Financial Monitoring System for CHR-CAR
--- Database Schema for 50% Working-System Prototype
--- Target DBMS: MySQL 5.7+ / MariaDB 10.4+
--- Database Name: chr_procurement
--- Engine: InnoDB | Character Set: utf8mb4 | Collation: utf8mb4_unicode_ci
--- =============================================================================
+ -- go to CHR V$ in file manager, open cmd on file path and
 
 CREATE DATABASE IF NOT EXISTS chr_procurement
   CHARACTER SET utf8mb4

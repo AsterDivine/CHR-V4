@@ -1,31 +1,16 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/create_bid.php
- * =============================================================================
- * 
- * Allows a prospective supplier/bidder to submit an official price quotation.
- * Uses pure PHP MySQLi prepared statements.
- * Inserts into table `bids` (procurement_id, bidder_name, company_name, bid_amount, remarks, status, submitted_at).
- * Logs the event into `transaction_history`.
- */
+
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
-// Accept only POST requests
+//Accept only post requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Method not allowed. Use POST.', null, 405);
 }
 
 /**
- * Validates and records a supplier's bid quotation in MySQL.
- * Used by: React component BidderQuotationForm.jsx.
- * Connects to: Endpoint /api/procurements/create_bid.php
- * Database tables affected: Writes to 'bids' and 'transaction_history'. Reads from 'procurements'.
- *
  * @param mysqli $conn Active MySQLi database connection.
  * @param array  $data Input payload.
  * @return int Primary key ID of the newly inserted bid record.
@@ -55,7 +40,7 @@ function createBidQuotation($conn, $data) {
 
     $bidAmount = (float)$bidAmount;
 
-    // Verify procurement exists and is open for bidding
+    //Verify procurement and is open for bidding
     $stmt = $conn->prepare('SELECT id, reference_no, title, abc, status, deadline FROM procurements WHERE id = ? LIMIT 1');
     if (!$stmt) {
         sendError('SQL prepare error: ' . $conn->error, null, 500);
@@ -70,7 +55,7 @@ function createBidQuotation($conn, $data) {
         sendError('Procurement project not found.', null, 404);
     }
 
-    // Prototype rule: can submit bids on 'Open' (or 'Published / Open') projects
+    //Bid sumission for open bids
     if ($procurement['status'] !== 'Open' && $procurement['status'] !== 'Published / Open') {
         sendError(sprintf('Cannot submit quotation: This procurement is currently "%s" (must be "Open").', $procurement['status']), null, 422);
     }
@@ -136,13 +121,9 @@ function createBidQuotation($conn, $data) {
     }
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Read and parse JSON body
 $input = getJsonInput();
-
-// 3. Save quotation into MySQL
 $newBidId = createBidQuotation($conn, $input);
 
 sendSuccess('Price quotation submitted successfully.', [

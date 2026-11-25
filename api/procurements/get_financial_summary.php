@@ -1,32 +1,20 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_financial_summary.php
- * =============================================================================
- * 
- * Computes simple regional procurement financial metrics:
- * 1. Total Approved Budget for Contract (ABC)
- * 2. Total Awarded Contract Amount
- * 3. Total Realized Savings (ABC - Awarded Amount)
- * 4. Overall Savings Percentage
- * 5. Project-by-project financial ledger breakdown
- * Uses pure PHP MySQLi prepared statements.
- */
+//simplify pa daw
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
 /**
- * Aggregates financial totals and loads individual project financial rows from MySQL.
  * Used by: React component SimpleFinancialMonitoring.jsx and CHRDashboard.jsx.
  * Connects to: Endpoint /api/procurements/get_financial_summary.php
- * Database tables affected: Reads from 'procurements' and 'bids'.
- *
+ * 
+ * 
  * @param mysqli $conn Active MySQLi database connection.
  * @return array Financial summary totals and project rows.
  */
+
+
 function fetchFinancialMonitoringSummary($conn) {
     $stmt = $conn->prepare('
         SELECT 
@@ -77,7 +65,7 @@ function fetchFinancialMonitoringSummary($conn) {
             $totalSavings += $proj['savings'];
         }
 
-        // Project-level savings rate
+        //savings rate
         $proj['savings_rate'] = ($proj['savings'] !== null && $proj['abc'] > 0)
             ? round(($proj['savings'] / $proj['abc']) * 100, 2)
             : 0;
@@ -99,10 +87,8 @@ function fetchFinancialMonitoringSummary($conn) {
     ];
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Compute metrics and send JSON response
 $summary = fetchFinancialMonitoringSummary($conn);
 
 sendSuccess('Financial monitoring summary calculated successfully.', $summary);

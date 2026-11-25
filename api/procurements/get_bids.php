@@ -1,25 +1,10 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_bids.php
- * =============================================================================
- * 
- * Retrieves all submitted bidder quotations from table `bids` joined with `procurements`.
- * Uses pure PHP MySQLi prepared statements.
- * Can filter by a specific procurement_id (via query param ?procurement_id=X).
- */
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
 /**
- * Fetches submitted quotations with connected procurement details from MySQL.
- * Used by: React component CHRBids.jsx and BidderSubmittedQuotations.jsx.
- * Connects to: Endpoint /api/procurements/get_bids.php?procurement_id=X
- * Database tables affected: Reads from 'bids' and 'procurements'.
- *
  * @param mysqli   $conn          Active MySQLi database connection.
  * @param int|null $procurementId Optional procurement filter.
  * @return array Array of bids with connected project titles and ABC values.
@@ -79,13 +64,9 @@ function fetchBidList($conn, $procurementId = null) {
     return $bids;
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Read optional procurement filter
 $procurementId = filter_input(INPUT_GET, 'procurement_id', FILTER_VALIDATE_INT);
-
-// 3. Fetch data and send JSON response
 $bids = fetchBidList($conn, $procurementId);
 
 sendSuccess('Submitted bidder quotations retrieved successfully.', [

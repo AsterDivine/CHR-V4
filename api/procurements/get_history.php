@@ -1,30 +1,15 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_history.php
- * =============================================================================
- * 
- * Retrieves chronological audit trail entries from the `transaction_history` table.
- * Uses pure PHP MySQLi prepared statements.
- * Supports filtering by a single procurement (via query param ?procurement_id=X)
- * or retrieving the global transaction log across all procurement projects.
- */
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
 /**
- * Loads transaction history logs joined with procurement reference information from MySQL.
- * Used by: React component TransactionHistoryView.jsx and CHRDashboard.jsx.
- * Connects to: Endpoint /api/procurements/get_history.php?procurement_id=X
- * Database tables affected: Reads from 'transaction_history' and 'procurements'.
- *
  * @param mysqli   $conn          Active MySQLi database connection.
  * @param int|null $procurementId Optional procurement filter.
  * @return array Array of transaction audit entries.
  */
+
 function fetchTransactionHistoryLogs($conn, $procurementId = null) {
     $sql = '
         SELECT 
@@ -73,13 +58,9 @@ function fetchTransactionHistoryLogs($conn, $procurementId = null) {
     return $logs;
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
-
-// 2. Read optional procurement filter
 $procurementId = filter_input(INPUT_GET, 'procurement_id', FILTER_VALIDATE_INT);
-
-// 3. Fetch data and send JSON response
 $logs = fetchTransactionHistoryLogs($conn, $procurementId);
 
 sendSuccess('Transaction history retrieved successfully.', [

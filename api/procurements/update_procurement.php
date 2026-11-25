@@ -1,14 +1,5 @@
 <?php
 /**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/update_procurement.php
- * =============================================================================
- * 
- * Pure PHP endpoint that updates an existing procurement record in the centralized
- * MySQL `chr_procurement` database (`procurements` table) and records a detailed
- * change entry in `transaction_history` using MySQLi prepared statements.
- *
  * Connection Flow:
  * React Edit Form (ProcurementForm.jsx) -> POST JSON -> update_procurement.php
  * -> MySQLi prepared statements -> `procurements` & `transaction_history` tables.
@@ -18,21 +9,16 @@ require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/response.php';
 
-// Accept only POST requests
+// Accept only post requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendError('Method not allowed. Use POST.', null, 405);
 }
 
 /**
- * Validates and sanitizes incoming edit form data on the PHP server.
- * Prevents bypassing React validation and blocks any attempt to alter ID or reference_no.
- * Used by: api/procurements/update_procurement.php main flow.
- * Connects to: React component ProcurementForm.jsx (Edit Mode POST payload).
- * Database table affected: Validates updatable columns of `procurements`.
- *
- * @param array $data Raw JSON or POST form data from React.
+ * @param array $data Raw json or post form data from React.
  * @return array Validated procurement update fields.
  */
+
 function validateUpdateProcurementInput($data) {
     $allowedStatuses = ['Open', 'For Evaluation', 'Awarded', 'In Progress', 'Completed'];
 
@@ -77,16 +63,11 @@ function validateUpdateProcurementInput($data) {
 }
 
 /**
- * Compares previous MySQL values against updated values to build clean audit strings
- * for the `transaction_history` table (e.g., Old Value: "Status: Open", New Value: "Status: For Evaluation").
- * Used by: updateProcurementRecord() in update_procurement.php.
- * Connects to: MySQL `transaction_history` columns `old_value` and `new_value`.
- * Database table affected: Prepares values for `transaction_history`.
- *
  * @param array $existing Current procurement row loaded from MySQL.
  * @param array $updated  Validated new values submitted from React.
  * @return array{old_value: string, new_value: string, remarks: string}
  */
+
 function buildUpdateAuditSummary($existing, $updated) {
     $oldParts = [];
     $newParts = [];
@@ -139,12 +120,7 @@ function buildUpdateAuditSummary($existing, $updated) {
 }
 
 /**
- * Updates allowed fields of an existing procurement record in MySQL (`procurements`),
- * logs the modification in `transaction_history`, and returns the reloaded record.
- * Used by: api/procurements/update_procurement.php.
- * Connects to: MySQL database `chr_procurement` via MySQLi prepared statements.
- * Database tables affected: Updates `procurements`, inserts into `transaction_history`.
- *
+ * Updates allowed fields of an existing procurement record in MySQL myprocurements
  * @param mysqli $conn Active MySQLi database connection from getDbConnection().
  * @param array  $data Validated update fields from validateUpdateProcurementInput().
  * @return array Reloaded procurement record directly from MySQL.
@@ -152,7 +128,7 @@ function buildUpdateAuditSummary($existing, $updated) {
 function updateProcurementRecord($conn, $data) {
     $id = $data['id'];
 
-    // 1. Load existing record from MySQL using a prepared statement
+    //Load existing record from MySQL using a prepared statement
     $selectStmt = $conn->prepare('SELECT * FROM procurements WHERE id = ? LIMIT 1');
     if (!$selectStmt) {
         error_log('update_procurement select prepare failed: ' . $conn->error);
@@ -171,7 +147,7 @@ function updateProcurementRecord($conn, $data) {
     $finalStatus = $data['status'] !== '' ? $data['status'] : $existing['status'];
     $data['status'] = $finalStatus;
 
-    // Preserve and recalculate savings if an awarded_amount already exists
+    //Preserve and recalculate savings if an awarded_amount already exists
     $awardedAmount = $existing['awarded_amount'] !== null ? (float)$existing['awarded_amount'] : null;
     $recalculatedSavings = $awardedAmount !== null ? round($data['abc'] - $awardedAmount, 2) : null;
 
@@ -180,7 +156,7 @@ function updateProcurementRecord($conn, $data) {
     $conn->begin_transaction();
 
     try {
-        // 2. Save updated fields in `procurements` (id and reference_no remain unchanged)
+        //Save updated fields in procurements, id and reference_no remain unchanged
         $updateStmt = $conn->prepare('
             UPDATE procurements
             SET
@@ -217,7 +193,7 @@ function updateProcurementRecord($conn, $data) {
         }
         $updateStmt->close();
 
-        // 3. Add a history entry into `transaction_history`
+        //Add a history entry into `transaction_history`
         $action = 'Procurement record updated';
         $histStmt = $conn->prepare('
             INSERT INTO transaction_history (
@@ -248,7 +224,7 @@ function updateProcurementRecord($conn, $data) {
 
         $conn->commit();
 
-        // 4. Reload updated procurement row from MySQL to return newest values
+        //Reload updated procurement row from MySQL to return newest values
         $reloadStmt = $conn->prepare('SELECT * FROM procurements WHERE id = ? LIMIT 1');
         $reloadStmt->bind_param('i', $id);
         $reloadStmt->execute();
@@ -270,19 +246,12 @@ function updateProcurementRecord($conn, $data) {
     }
 }
 
-// 1. Establish MySQLi database connection to `chr_procurement`
+//Establish MySQLi database connection
 $conn = getDbConnection();
-
-// 2. Read JSON or POST form data from React
 $input = getJsonInput();
-
-// 3. Validate editable fields on PHP server
 $validatedData = validateUpdateProcurementInput($input);
-
-// 4. Save changes, log transaction_history, and reload newest MySQL record
 $updatedProcurement = updateProcurementRecord($conn, $validatedData);
 
-// 5. Return standard JSON success response
 sendSuccess('Procurement record updated successfully.', [
     'procurement_id' => $validatedData['id'],
     'procurement'    => $updatedProcurement,

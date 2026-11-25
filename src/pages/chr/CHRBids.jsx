@@ -4,13 +4,10 @@ import { loadBids, selectWinningBid, loadProcurements } from '../../services/api
 
 /**
  * Formats a numeric value into Philippine Peso currency format (PHP #,##0.00).
- * Used by: CHRBids to display ABC, bid amount, and potential savings.
- * Connects to: Local formatting utility.
- * Database table affected: None.
- *
  * @param {number|null} val - Amount to format.
  * @returns {string} Formatted currency string.
  */
+
 function formatCurrency(val) {
   if (val === null || val === undefined || isNaN(val)) return '—';
   return '₱ ' + Number(val).toLocaleString('en-US', {
@@ -21,13 +18,10 @@ function formatCurrency(val) {
 
 /**
  * Maps bid status strings to clean CSS badge classes.
- * Used by: CHRBids to render visual status badges.
- * Connects to: Local style helper.
- * Database table affected: None.
- *
  * @param {string} status - Bid status string.
  * @returns {string} CSS class name for styling.
  */
+
 function getBidBadgeClass(status) {
   switch (status) {
     case 'Selected':
@@ -48,10 +42,8 @@ function getBidBadgeClass(status) {
  * CHRBids Component
  * CHR Personnel evaluation portal for supplier quotations across all projects.
  * Lists all submitted price bids, shows potential savings, and allows awarding.
- * Used by: App.jsx at route /chr/bids.
- * Connects to: Endpoints /api/procurements/get_bids.php and /api/procurements/select_bid.php.
- * Database tables affected: Reads and updates 'bids' and 'procurements', writes 'transaction_history'.
  */
+
 export default function CHRBids() {
   const [bids, setBids] = useState([]);
   const [procurements, setProcurements] = useState([]);
@@ -64,10 +56,8 @@ export default function CHRBids() {
 
   /**
    * Loads all submitted bids and active procurements from the PHP backend.
-   * Used by: useEffect on component mount and after awarding a bid.
-   * Connects to: /api/procurements/get_bids.php and /api/procurements/get_procurements.php.
-   * Database tables affected: Reads 'bids' and 'procurements'.
    */
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -92,12 +82,10 @@ export default function CHRBids() {
 
   /**
    * Handles selection of a winning quotation by CHR Personnel.
-   * Used by: "Select as Winning Bid" button in the table.
-   * Connects to: Endpoint /api/procurements/select_bid.php.
-   * Database tables affected: Updates 'bids' and 'procurements', inserts into 'transaction_history'.
-   *
+   * 
    * @param {object} bid - The bid object being awarded.
    */
+
   const handleSelectWinner = async (bid) => {
     const confirmMsg = `Confirm awarding contract for "${bid.procurement_reference}" to:\n\nSupplier: ${bid.bidder_name}\nQuoted Amount: ${formatCurrency(bid.bid_amount)}\n\nThis will automatically calculate savings and advance project stage to "Notice of Award".`;
     if (!window.confirm(confirmMsg)) return;
@@ -122,11 +110,14 @@ export default function CHRBids() {
     }
   };
 
-  // Filter bids by status if requested
+  //Filter bids by status
   const filteredBids = bids.filter((b) => {
     if (statusFilter === 'ALL') return true;
     return b.status === statusFilter;
   });
+
+
+// Revamp kung may time
 
   return (
     <article aria-labelledby="chr-bids-heading">

@@ -1,14 +1,4 @@
 <?php
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: api/procurements/get_procurement.php
- * =============================================================================
- * 
- * Retrieves full details for a single procurement record by ID.
- * Uses pure PHP MySQLi prepared statements.
- * Queries the 3 core tables: `procurements`, `bids`, and `transaction_history`.
- */
 
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
@@ -58,9 +48,6 @@ function fetchProcurementById($conn, $id) {
 
 /**
  * Loads all supplier bids submitted for a procurement.
- * Used by: React component CHRBidTable.jsx inside ProcurementDetails.jsx.
- * Connects to: Endpoint /api/procurements/get_procurement.php?id=X
- * Database table affected: Reads from 'bids'.
  *
  * @param mysqli $conn          Active MySQLi database connection.
  * @param int    $procurementId Procurement primary key ID.
@@ -105,14 +92,12 @@ function fetchProcurementBids($conn, $procurementId) {
 
 /**
  * Loads the chronological transaction and status history for a procurement.
- * Used by: React component inside ProcurementDetails.jsx.
- * Connects to: Endpoint /api/procurements/get_procurement.php?id=X
- * Database table affected: Reads from 'transaction_history'.
- *
+
  * @param mysqli $conn          Active MySQLi database connection.
  * @param int    $procurementId Procurement primary key ID.
  * @return array Array of audit history entries.
  */
+
 function fetchProcurementHistory($conn, $procurementId) {
     $stmt = $conn->prepare('
         SELECT 
@@ -148,16 +133,14 @@ function fetchProcurementHistory($conn, $procurementId) {
     return $history;
 }
 
-// 1. Establish database connection
+//Establish database connection
 $conn = getDbConnection();
 
-// 2. Validate requested procurement ID
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$id) {
     sendError('A valid procurement ID is required.', null, 422);
 }
 
-// 3. Load all connected relational records
 $procurement = fetchProcurementById($conn, $id);
 if (!$procurement) {
     sendError('Procurement record not found.', null, 404);

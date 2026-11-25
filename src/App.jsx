@@ -1,28 +1,8 @@
-/**
- * =============================================================================
- * CENTRALIZED PROCUREMENT TRACKING AND FINANCIAL MONITORING SYSTEM (CHR-CAR)
- * File: src/App.jsx
- * =============================================================================
- * 
- * Main application routing component for the 50% Working-System Prototype.
- * 
- * CAPSTONE PROTOTYPE SCOPE NOTE:
- * "Prototype only — authentication and final access control will be implemented in a later development stage."
- * In this 50% submission, authentication (login, registration, passwords, sessions,
- * and role-based route guards) is temporarily out of scope.
- * Evaluators navigate directly between CHR Personnel and Bidder modules.
- */
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-
-// Layout Navigation Wrapper
 import Navigation from './components/Navigation.jsx';
-
-// Shared Home / Prototype Landing
 import Home from './pages/Home.jsx';
 
-// CHR Personnel Modules
 import CHRDashboard from './pages/chr/CHRDashboard.jsx';
 import ProcurementTable from './pages/chr/ProcurementTable.jsx';
 import ProcurementForm from './pages/chr/ProcurementForm.jsx';
@@ -30,20 +10,13 @@ import ProcurementDetails from './pages/chr/ProcurementDetails.jsx';
 import CHRBids from './pages/chr/CHRBids.jsx';
 import SimpleFinancialMonitoring from './pages/chr/SimpleFinancialMonitoring.jsx';
 import TransactionHistoryView from './pages/chr/TransactionHistoryView.jsx';
-import ExportProcurement from './pages/chr/ExportProcurement.jsx';
 
-// Bidder Modules
 import BidderOpportunities from './pages/bidder/BidderOpportunities.jsx';
 import BidderQuotationForm from './pages/bidder/BidderQuotationForm.jsx';
 import BidderSubmittedQuotations from './pages/bidder/BidderSubmittedQuotations.jsx';
 
 /**
  * Main Application Root Component
- * Sets up client-side routes for the core prototype modules under a unified Navigation layout.
- * Used by: src/main.jsx as the React DOM root entry point.
- * Connects to: React Router DOM.
- * Database table affected: None.
- *
  * @returns {JSX.Element} React routing tree.
  */
 export default function App() {
@@ -80,12 +53,6 @@ export default function App() {
         {/* 7. Transaction History Audit Log */}
         <Route path="/chr/history" element={<TransactionHistoryView />} />
 
-        {/* 8. Export Procurement Record */}
-        <Route path="/chr/export" element={<ExportProcurement />} />
-
-        {/* ================================================================= */}
-        {/* BIDDER MODULES (Core Functions)                                   */}
-        {/* ================================================================= */}
         {/* 1. Open Opportunities Catalog */}
         <Route path="/bidder/opportunities" element={<BidderOpportunities />} />
 

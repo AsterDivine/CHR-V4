@@ -6,9 +6,8 @@ import {
   loadProcurementDetails,
 } from '../../services/api.js';
 
-/**
- * Allowed procurement workflow statuses matching the MySQL `procurements` table.
- */
+// Allowed procurement workflow statuses matching the MySQL `procurements` table.
+
 const PROCUREMENT_STATUS_OPTIONS = [
   'Open',
   'For Evaluation',
@@ -17,9 +16,8 @@ const PROCUREMENT_STATUS_OPTIONS = [
   'Completed',
 ];
 
-/**
- * Standard Philippine government procurement modes for CHR-CAR.
- */
+//Standard Philippine government procurement modes for CHR-CAR.
+
 const PROCUREMENT_TYPE_OPTIONS = [
   'NP-53.9 Small Value Procurement',
   'Competitive Bidding (Public Bidding)',
@@ -30,14 +28,11 @@ const PROCUREMENT_TYPE_OPTIONS = [
 ];
 
 /**
- * Formats a numeric amount into Philippine Peso currency using Intl.NumberFormat.
- * Used by: ProcurementForm (Edit Mode snapshot display) to show the newest MySQL ABC.
- * Connects to: Local display formatting helper.
- * Database table affected: None.
- *
  * @param {number|string|null} amount - Monetary value from MySQL.
  * @returns {string} Formatted peso string (e.g., ₱150,000.00).
  */
+
+//Peso format
 function formatPeso(amount) {
   if (amount === null || amount === undefined || amount === '' || isNaN(Number(amount))) {
     return '—';
@@ -51,13 +46,10 @@ function formatPeso(amount) {
 }
 
 /**
- * Returns a blank initial form object for creating a new procurement record.
- * Used by: ProcurementForm to initialize state and clear the form after creation.
- * Connects to: Local React component state (formData).
- * Database table affected: Maps directly to columns of `procurements`.
- *
+
  * @returns {object} Initial procurement form state.
  */
+
 function createEmptyProcurement() {
   return {
     reference_no: '',
@@ -74,10 +66,6 @@ function createEmptyProcurement() {
 /**
  * Validates required procurement fields in React before sending to PHP.
  * Checks Reference Number, Title, ABC (> 0), and Submission Deadline.
- * Used by: ProcurementForm.handleSubmit().
- * Connects to: Client-side validation state (fieldErrors).
- * Database table affected: None (pre-submission validation; PHP re-validates on server).
- *
  * @param {object} data - Current procurement form state.
  * @returns {{ isValid: boolean, errors: object }} Validation result and per-field error messages.
  */
@@ -109,21 +97,7 @@ function validateProcurementForm(data) {
 }
 
 /**
- * ProcurementForm Component (Create & Edit Procurement)
- * Semantic HTML5 React form for:
- * 1. Creating a new CHR-CAR procurement record (POST /api/procurements/create_procurement.php)
- * 2. Editing an existing procurement record:
- *    - Loads current MySQL data via GET /api/procurements/get_procurement.php?id=X
- *    - Keeps Database ID untouched and Reference Number read-only
- *    - Sends updated fields via POST /api/procurements/update_procurement.php
- *    - PHP endpoint saves changes to MySQL `procurements` and logs Old/New Value into `transaction_history`
- *    - Reloads the procurement record from MySQL and shows the newest values immediately
- *
- * Note: Delete functionality is intentionally omitted for government record integrity.
- * Used by: App.jsx at routes /chr/procurements/new and /chr/procurements/:id/edit.
- * Database tables affected: Reads/writes `procurements` and writes `transaction_history`.
- *
- * @returns {JSX.Element} Semantic Create/Edit Procurement page.
+ * @returns {JSX.Element}
  */
 export default function ProcurementForm() {
   const navigate = useNavigate();
@@ -144,15 +118,8 @@ export default function ProcurementForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  /**
-   * Fetches the current procurement record from MySQL via the PHP endpoint
-   * GET /api/procurements/get_procurement.php?id=X and populates the Edit form.
-   * Called both on initial Edit mount and immediately after saving updates so
-   * the newest database values and transaction_history entries appear right away.
-   *
-   * Connects to: src/services/api.js -> loadProcurementDetails(id) -> get_procurement.php
-   * Database tables affected: Reads from `procurements` and `transaction_history`.
-   */
+  //Fetches the current procurement record from MySQL via the PHP endpoint
+  
   const loadExistingProcurement = useCallback(async () => {
     if (!isEditMode) return;
 
@@ -187,11 +154,6 @@ export default function ProcurementForm() {
   }, [isEditMode, loadExistingProcurement]);
 
   /**
-   * Updates form field state and clears any active validation error for that field.
-   * Used by: All editable <input>, <textarea>, and <select> elements in the form.
-   * Connects to: Local React state (formData, fieldErrors).
-   * Database table affected: None.
-   *
    * @param {React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>} event
    */
   const handleInputChange = (event) => {
@@ -210,12 +172,7 @@ export default function ProcurementForm() {
     }
   };
 
-  /**
-   * Resets all form inputs and validation errors back to default empty values (Create Mode).
-   * Used by: Clear Form button and post-creation cleanup.
-   * Connects to: Local React state (formData, fieldErrors, errorMessage).
-   * Database table affected: None.
-   */
+  //Resets all form inputs and validation errors back to default empty values
   const handleResetForm = () => {
     setFormData(createEmptyProcurement());
     setFieldErrors({});
@@ -225,19 +182,6 @@ export default function ProcurementForm() {
 
   /**
    * Validates the form in React, then connects to the PHP backend via fetch():
-   * - Create Mode: calls POST /api/procurements/create_procurement.php, clears form,
-   *   and redirects to /chr/procurements to reload records from MySQL.
-   * - Edit Mode: calls POST /api/procurements/update_procurement.php (which updates
-   *   MySQL `procurements` and writes a history log into `transaction_history`), then
-   *   immediately reloads GET /api/procurements/get_procurement.php?id=X and displays
-   *   the newest values and latest audit log right on this page.
-   *
-   * Connects to:
-   * - api/procurements/create_procurement.php (via createProcurement)
-   * - api/procurements/update_procurement.php (via updateProcurement)
-   * - api/procurements/get_procurement.php (via loadExistingProcurement)
-   * Database tables affected: Writes to `procurements` and `transaction_history`.
-   *
    * @param {React.FormEvent<HTMLFormElement>} event
    */
   const handleSubmit = async (event) => {

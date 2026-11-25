@@ -56,15 +56,6 @@ function triggerFileDownload(content, filename, mimeType) {
 }
 
 /**
- * ExportProcurement Component
- * Allows CHR Personnel to search and select a specific procurement record
- * by Reference No. or Project Title, preview its complete report (summary,
- * financial metrics, submitted quotations, and transaction history), and
- * export it as CSV, JSON, or a formatted printable PDF report.
- *
- * Used by: App.jsx at route /chr/export.
- * Connects to: /api/procurements/get_procurements.php and /api/procurements/get_procurement.php?id=X
- * Database tables affected: Reads from 'procurements', 'bids', and 'transaction_history'.
  */
 export default function ExportProcurement() {
   const [procurements, setProcurements] = useState([]);
